@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -32,21 +34,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override // oAuth2 client가 기타 처리를 한 후 OAuth2UserRequest를 건내줌
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-
-        // stateful일 경우 securityContextHolder에 저장되지만 stateless일 경우 저장되지 않음
-        // repository에 저장은 이곳에서 하고, 성공할 경우 successHandler에서 jwt 처리를 함
-        return processOAuth2User(userRequest, oAuth2User);
-    }
-
-    private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         // OAuth2 서비스 id 구분코드 (구글, 네이버, 카카오 등)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
+        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+
+
         OAuth2UserAttributes userAttributes = OAuth2AttributesDispatcher.dispatch(registrationId, oAuth2User.getAttributes());
+        Optional<GeneralUser> byUserEmail = generalUserService.findByUserEmail(userAttributes.getEmail());
 
-        GeneralUser generalUser = generalUserService.saveOrUpdate(userAttributes.toGeneralUser());
+        GeneralUser generalUser;
+        if (byUserEmail.isPresent())
+            generalUser = generalUserService.saveOrUpdate(userAttributes.toGeneralUser(byUserEmail.get().getRole()));
+        else generalUser = generalUserService.saveOrUpdate(userAttributes.toGeneralUser());
 
+        // stateful일 경우 securityContextHolder에 저장되지만 stateless일 경우 저장되지 않음
+        // repository에 저장은 이곳에서 하고, 성공할 경우 successHandler에서 jwt 처리를 함
         return new GeneralOAuth2User(generalUser);
     }
 }

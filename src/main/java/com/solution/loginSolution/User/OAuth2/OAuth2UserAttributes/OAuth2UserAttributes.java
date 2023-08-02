@@ -32,11 +32,15 @@ public class OAuth2UserAttributes {
     }
 
     public GeneralUser toGeneralUser() {
+        return toGeneralUser(Role.ROLE_MEMBER);
+    }
+
+    public GeneralUser toGeneralUser(Role role) {
         return GeneralUser.builder()
                 .userType(getUserType())
                 .userName(getName())
                 .userEmail(getEmail())
-                .role(Role.ROLE_MEMBER)
+                .role(role)
                 .build();
     }
 }
