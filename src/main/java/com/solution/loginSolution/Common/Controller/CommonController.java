@@ -14,4 +14,7 @@ public class CommonController {
     public ResponseEntity<String> index() {
         return new ResponseEntity<>("Hello World!", HttpStatus.OK);
     }
+
+    @GetMapping("/health-check")
+    public ResponseEntity<String> healthCheck() { return new ResponseEntity<>("Hello World!", HttpStatus.OK); }
 }
