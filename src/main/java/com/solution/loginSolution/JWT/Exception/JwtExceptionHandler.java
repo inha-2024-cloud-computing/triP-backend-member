@@ -1,11 +1,11 @@
 package com.solution.loginSolution.JWT.Exception;
 
-import com.solution.loginSolution.JWT.Controller.RefreshTokenController;
+import com.solution.loginSolution.JWT.Controller.TokenController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = RefreshTokenController.class)
+@RestControllerAdvice(basePackageClasses = TokenController.class)
 public class JwtExceptionHandler {
     @ExceptionHandler(TokenNotValidException.class)
     public ResponseEntity<String> TokenNotValid(TokenNotValidException e) {
