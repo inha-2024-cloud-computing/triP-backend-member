@@ -30,8 +30,9 @@ public class oAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         GeneralOAuth2User oAuth2User = (GeneralOAuth2User) authentication.getPrincipal();
         Long userId = oAuth2User.getId();
         String userEmail = oAuth2User.getUserEmail();
+        String userName = oAuth2User.getUserName();
 
-        Map<String, Object> responseBodyWriting = jwtTokenProvider.generateResponseBody(userId, userEmail);
+        Map<String, Object> responseBodyWriting = jwtTokenProvider.generateResponseBody(userId, userName, userEmail);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(responseBodyWriting));
 

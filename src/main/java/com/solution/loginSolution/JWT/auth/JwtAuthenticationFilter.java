@@ -72,8 +72,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("authentication success");
 
         String userEmail = ((PrincipalDetails) authResult.getPrincipal()).getUsername();
+        String userName = ((PrincipalDetails) authResult.getPrincipal()).getMember().getUserName();
 
         Long userId = generalUserService.findIdByUserEmail(userEmail);
+
 
         String accessToken = jwtTokenProvider.createAccessToken(userId, userEmail);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, userEmail);
@@ -83,7 +85,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // body에 tokens 작성
         //HashMap<String, Object> responseBodyWriting = new HashMap<>();
-        Map<String, Object> responseBodyWriting = jwtTokenProvider.generateResponseBody(userId, userEmail);
+        Map<String, Object> responseBodyWriting = jwtTokenProvider.generateResponseBody(userId, userName, userEmail);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // body type 설정
         response.getWriter().print(objectMapper.writeValueAsString(responseBodyWriting)); //body에 작성
 

@@ -174,12 +174,13 @@ public class JwtTokenProvider {
         }
     }
 
-    public Map<String, Object> generateResponseBody(Long userId, String userEmail) {
+    public Map<String, Object> generateResponseBody(Long userId, String userName, String userEmail) {
         String accessToken = createAccessToken(userId, userEmail);
         String refreshToken = createRefreshToken(userId, userEmail);
 
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("id", userId); // body에 userId 추가
+        responseBody.put("name", userName); // body에 userName 추가
         responseBody.put(accessTokenSendingHeaderName, accessToken); //body에 accessToken 추가
         responseBody.put(refreshTokenHeaderName, refreshToken); //body에 refreshToken 추가
 

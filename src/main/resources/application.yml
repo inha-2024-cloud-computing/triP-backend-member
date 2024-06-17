@@ -34,7 +34,6 @@ spring:
 
 
 
-
 jwt:
     accessToken:
         tokenPrefix: 'Bearer '
@@ -60,3 +59,10 @@ springdoc:
 
 
 debug: true
+
+server:
+    servlet:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
