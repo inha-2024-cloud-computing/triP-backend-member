@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -185,6 +188,15 @@ public class JwtTokenProvider {
         responseBody.put(refreshTokenHeaderName, refreshToken); //body에 refreshToken 추가
 
         return responseBody;
+    }
+
+    public String generateResponseParameter(Long userId, String userName, String userEmail) throws UnsupportedEncodingException {
+        String accessToken = createAccessToken(userId, userEmail);
+        String refreshToken = createRefreshToken(userId, userEmail);
+
+        String encodedName = URLEncoder.encode(userName, StandardCharsets.UTF_8);
+
+        return "userId=" + userId + "&" + "userName="+ encodedName + "&" + "accessToken=" + accessToken + "&" + "refreshToken=" + refreshToken;
     }
 
 }

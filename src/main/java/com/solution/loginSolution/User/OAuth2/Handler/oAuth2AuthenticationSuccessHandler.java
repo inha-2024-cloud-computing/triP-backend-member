@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -24,6 +25,9 @@ public class oAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
 
+    @Value("${client.url}")
+    private String clientUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("OAuth2 Authentication Success");
@@ -35,6 +39,11 @@ public class oAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Map<String, Object> responseBodyWriting = jwtTokenProvider.generateResponseBody(userId, userName, userEmail);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(responseBodyWriting));
+
+        String parameter = jwtTokenProvider.generateResponseParameter(userId, userName, userEmail);
+        String clientFull = clientUrl + "/token-exchange?" + parameter;
+        getRedirectStrategy().sendRedirect(request, response, clientFull);
+
 
         // REST 형식이므로 필요없음
         //super.onAuthenticationSuccess(request, response, authentication);
