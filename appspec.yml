@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+    - source: /  # S3에서 다운로드한 파일의 루트
+      destination: /home/ubuntu  # EC2 인스턴스 내의 목적지 경로
+hooks:
+    ApplicationStart:
+        - location: scripts/start_application.sh
+          timeout: 300
+          runas: ec2-user
